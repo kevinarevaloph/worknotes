@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Daily Work Notes | Kevin Arevalo</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Site favicon -->
+  <link rel="icon" type="image/png" href="../assets/favicon-o.png">
+
+  <!-- Global website styles -->
+  <link rel="stylesheet" href="../styles.css">
+
+  <!-- Daily Work Notes styles -->
+  <link rel="stylesheet" href="daily-work-notes.css">
+</head>
+
+<body class="daily-notes-page">
+
+  <!-- =========================================================
+       SITE HEADER
+       ========================================================= -->
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav" aria-label="Primary navigation">
+
+        <a
+          class="brand"
+          href="../index.html"
+          aria-label="Kevin Arevalo"
+        >
+          <img
+            src="../assets/favicon-w.png"
+            alt="Kevin Arevalo"
+          >
+        </a>
+
+        <a href="../social/social-media-calendar.html">
+          Social Media Calendar
+        </a>
+
+        <a
+          class="btn purple1"
+          href="mailto:kevinarevalofreelanceph@gmail.com?subject=I%20would%20like%20to%20know%20more%20about%20your%20services&body=Hi%20Kevin%2C%0A%0AI%20am%20interested%20in%20your%20services.%20Can%20you%20please%20get%20back%20to%20me%2C%20and%20let%27s%20talk%20about%20it.%0A%0AThank%20you%21"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Contact Me
+        </a>
+
+        <div class="socials" aria-label="Social links">
+          <a
+            href="https://www.linkedin.com/in/kevin-arevalo-44ba21239/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <img
+              src="../assets/LinkedIn_Icon.svg"
+              alt=""
+            >
+          </a>
+        </div>
+
+        <button
+          class="mobile-toggle"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- =========================================================
+       MAIN WORKSPACE
+       ========================================================= -->
+
+  <main class="daily-notes-main">
+
+    <div class="daily-notes-wrap">
+
+      <!-- Workspace heading -->
+      <section class="workspace-header">
+
+        <div class="workspace-heading">
+
+          <span class="workspace-eyebrow">
+            PERSONAL WORKSPACE
+          </span>
+
+          <h1>Notes</h1>
+
+          <p>
+            A simple place to write, organize, and keep track of your work.
+          </p>
+
+        </div>
+
+        <div class="workspace-actions">
+
+          <button
+            id="newWorkTab"
+            class="daily-primary-btn"
+            type="button"
+          >
+            <span aria-hidden="true">+</span>
+            New Note
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           WORKSPACE TOOLBAR
+           ===================================================== -->
+
+      <section
+        class="workspace-toolbar"
+        aria-label="Notes controls"
+      >
+
+        <div class="workspace-toolbar-left">
+
+          <strong>My Notes</strong>
+
+          <span
+            id="tabCount"
+            class="tab-count"
+          >
+            0 notes
+          </span>
+
+        </div>
+
+        <div class="workspace-toolbar-right">
+
+          <label
+            class="note-search"
+            for="tabSearch"
+          >
+            <span aria-hidden="true">⌕</span>
+
+            <input
+              id="tabSearch"
+              type="search"
+              placeholder="Search notes..."
+              autocomplete="off"
+            >
+          </label>
+
+          <button
+            id="clearSearch"
+            class="text-btn"
+            type="button"
+            hidden
+          >
+            Clear
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           NOTE TABS
+           ===================================================== -->
+
+      <section
+        class="tabs-area"
+        aria-label="Work notes"
+      >
+
+        <div
+          id="workTabs"
+          class="work-tabs"
+          role="tablist"
+          aria-label="Work note tabs"
+        >
+        </div>
+
+        <button
+          id="addTabButton"
+          class="add-tab-btn"
+          type="button"
+          aria-label="Create a new note"
+          title="Create a new note"
+        >
+          +
+        </button>
+
+      </section>
+
+
+      <!-- =====================================================
+           DOCUMENT WORKSPACE
+           ===================================================== -->
+
+      <section
+        id="documentWorkspace"
+        class="document-workspace"
+        aria-label="Note editor"
+      >
+
+        <!-- Editor toolbar -->
+        <div class="editor-toolbar">
+
+          <div
+            class="editor-toolbar-group"
+            aria-label="Text formatting"
+          >
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="bold"
+              aria-label="Bold"
+              title="Bold"
+            >
+              <strong>B</strong>
+            </button>
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="italic"
+              aria-label="Italic"
+              title="Italic"
+            >
+              <em>I</em>
+            </button>
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="underline"
+              aria-label="Underline"
+              title="Underline"
+            >
+              <u>U</u>
+            </button>
+
+          </div>
+
+
+          <div
+            class="editor-toolbar-group"
+            aria-label="Paragraph formatting"
+          >
+
+            <button
+              class="editor-btn editor-text-btn"
+              type="button"
+              data-command="formatBlock"
+              data-value="H2"
+              title="Heading"
+            >
+              H
+            </button>
+
+            <button
+              class="editor-btn editor-text-btn"
+              type="button"
+              data-command="formatBlock"
+              data-value="P"
+              title="Normal text"
+            >
+              ¶
+            </button>
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="insertUnorderedList"
+              aria-label="Bullet list"
+              title="Bullet list"
+            >
+              •
+            </button>
+
+          </div>
+
+
+          <div
+            class="editor-toolbar-group"
+            aria-label="Table controls"
+          >
+
+            <button
+              id="insertTable"
+              class="editor-btn table-tool-btn"
+              type="button"
+              title="Insert table"
+            >
+              ▦ Table
+            </button>
+
+            <button
+              id="addRow"
+              class="editor-btn table-tool-btn"
+              type="button"
+              title="Add row"
+              disabled
+            >
+              + Row
+            </button>
+
+            <button
+              id="addColumn"
+              class="editor-btn table-tool-btn"
+              type="button"
+              title="Add column"
+              disabled
+            >
+              + Col
+            </button>
+
+            <button
+              id="deleteRow"
+              class="editor-btn table-tool-btn"
+              type="button"
+              title="Delete selected row"
+              disabled
+            >
+              − Row
+            </button>
+
+            <button
+              id="deleteColumn"
+              class="editor-btn table-tool-btn"
+              type="button"
+              title="Delete selected column"
+              disabled
+            >
+              − Col
+            </button>
+
+          </div>
+
+
+          <div
+            class="editor-toolbar-group editor-history-group"
+            aria-label="History"
+          >
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="undo"
+              aria-label="Undo"
+              title="Undo"
+            >
+              ↶
+            </button>
+
+            <button
+              class="editor-btn"
+              type="button"
+              data-command="redo"
+              aria-label="Redo"
+              title="Redo"
+            >
+              ↷
+            </button>
+
+          </div>
+
+
+<div class="editor-save-status">
+
+  <span
+    id="saveIndicator"
+    class="save-indicator"
+  >
+    Saved
+  </span>
+
+  <button
+    id="saveNote"
+    class="save-note-btn"
+    type="button"
+    title="Save note"
+  >
+    Save Note
+  </button>
+
+</div>
+
+
+        <!-- Document page -->
+        <article class="document-page">
+
+          <div class="document-top">
+
+            <input
+              id="noteTitle"
+              class="note-title"
+              type="text"
+              placeholder="Untitled Note"
+              aria-label="Note title"
+              maxlength="150"
+            >
+
+            <div class="document-date-row">
+
+              <label for="noteDate">
+                <span>Date</span>
+
+                <input
+                  id="noteDate"
+                  type="date"
+                  aria-label="Note date"
+                >
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- Actual notepad editor -->
+          <div
+            id="noteEditor"
+            class="note-editor"
+            contenteditable="true"
+            role="textbox"
+            aria-label="Work note"
+            aria-multiline="true"
+            spellcheck="true"
+            data-placeholder="Start writing your note..."
+          >
+          </div>
+
+
+          <div class="document-bottom">
+
+            <span>
+              Changes are saved automatically.
+            </span>
+
+            <button
+              id="duplicateNote"
+              class="document-action"
+              type="button"
+            >
+              Duplicate Note
+            </button>
+
+            <button
+              id="deleteNote"
+              class="document-action delete-action"
+              type="button"
+            >
+              Delete Note
+            </button>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- Empty workspace -->
+      <section
+        id="emptyWorkspace"
+        class="empty-workspace"
+        hidden
+      >
+
+        <div class="empty-workspace-icon">
+          ✎
+        </div>
+
+        <h2>No notes yet</h2>
+
+        <p>
+          Create your first note to start writing.
+        </p>
+
+        <button
+          id="emptyNewNote"
+          class="daily-primary-btn"
+          type="button"
+        >
+          + Create a Note
+        </button>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <footer class="daily-notes-footer">
+
+    <div class="daily-notes-footer-inner">
+
+      <p>
+        © <span id="year"></span> Kevin Arevalo
+      </p>
+
+      <p>
+        Daily Work Notes
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <!-- Daily Work Notes JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="daily-work-notes.js"></script>
+
+</body>
+</html>
