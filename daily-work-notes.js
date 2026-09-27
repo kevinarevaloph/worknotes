@@ -3168,4 +3168,177 @@
       }
     );
   }
+
+
+/* =========================================
+   Additional Text Formatting
+========================================= */
+
+let savedEditorRange = null;
+
+function saveEditorSelection() {
+  const editor = $("noteEditor");
+
+  if (!editor) return;
+
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+
+  if (editor.contains(range.commonAncestorContainer)) {
+    savedEditorRange = range.cloneRange();
+  }
+}
+
+function restoreEditorSelection() {
+  const editor = $("noteEditor");
+
+  if (!editor || !savedEditorRange) return;
+
+  const selection = window.getSelection();
+
+  selection.removeAllRanges();
+  selection.addRange(savedEditorRange);
+
+  editor.focus();
+}
+
+
+/* Numbered List */
+document.querySelectorAll('[data-command="insertOrderedList"]').forEach(button => {
+  button.addEventListener("mousedown", event => {
+    event.preventDefault();
+    saveEditorSelection();
+  });
+
+  button.addEventListener("click", () => {
+    restoreEditorSelection();
+    document.execCommand("insertOrderedList", false, null);
+    scheduleSave();
+  });
+});
+
+
+/* Insert Link */
+const insertLinkButton = $("insertLink");
+
+if (insertLinkButton) {
+  insertLinkButton.addEventListener("mousedown", event => {
+    event.preventDefault();
+    saveEditorSelection();
+  });
+
+  insertLinkButton.addEventListener("click", () => {
+    restoreEditorSelection();
+
+    const selection = window.getSelection();
+
+    if (!selection || selection.rangeCount === 0) {
+      return;
+    }
+
+    const selectedText = selection.toString().trim();
+
+    if (!selectedText) {
+      alert("Please select some text first.");
+      return;
+    }
+
+    const url = prompt("Enter the URL:");
+
+    if (!url) return;
+
+    let finalUrl = url.trim();
+
+    if (
+      !finalUrl.startsWith("http://") &&
+      !finalUrl.startsWith("https://") &&
+      !finalUrl.startsWith("mailto:")
+    ) {
+      finalUrl = "https://" + finalUrl;
+    }
+
+    document.execCommand("createLink", false, finalUrl);
+
+    scheduleSave();
+  });
+}
+
+
+/* Font Size */
+const fontSizeSelect = $("fontSizeSelect");
+
+if (fontSizeSelect) {
+  fontSizeSelect.addEventListener("mousedown", () => {
+    saveEditorSelection();
+  });
+
+  fontSizeSelect.addEventListener("change", () => {
+    if (!fontSizeSelect.value) return;
+
+    restoreEditorSelection();
+
+    document.execCommand(
+      "fontSize",
+      false,
+      fontSizeSelect.value
+    );
+
+    fontSizeSelect.value = "";
+
+    scheduleSave();
+  });
+}
+
+
+/* Text Color */
+const textColorPicker = $("textColorPicker");
+
+if (textColorPicker) {
+  textColorPicker.addEventListener("mousedown", () => {
+    saveEditorSelection();
+  });
+
+  textColorPicker.addEventListener("change", () => {
+    restoreEditorSelection();
+
+    document.execCommand(
+      "foreColor",
+      false,
+      textColorPicker.value
+    );
+
+    scheduleSave();
+  });
+}
+
+
+/* Text Alignment */
+const textAlignSelect = $("textAlignSelect");
+
+if (textAlignSelect) {
+  textAlignSelect.addEventListener("mousedown", () => {
+    saveEditorSelection();
+  });
+
+  textAlignSelect.addEventListener("change", () => {
+    if (!textAlignSelect.value) return;
+
+    restoreEditorSelection();
+
+    document.execCommand(
+      textAlignSelect.value,
+      false,
+      null
+    );
+
+    textAlignSelect.value = "";
+
+    scheduleSave();
+  });
+}
+
+
 })();
