@@ -335,7 +335,7 @@
   border: 1px solid var(--daily-border);
   border-top: 0;
   background: #e4e8ee;
-  overflow: hidden;
+  overflow: visible;
 }
 
 
@@ -344,6 +344,9 @@
    ========================================================= */
 
 .editor-toolbar {
+  position: sticky;
+  top: 92px;
+  z-index: 20;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -921,4 +924,37 @@
     transition: none;
   }
 
+}
+
+/* Additional editor controls */
+.editor-select {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.editor-select:focus {
+  outline: 2px solid rgba(249, 115, 22, 0.2);
+  border-color: #f97316;
+}
+
+.editor-color {
+  width: 36px;
+  height: 36px;
+  padding: 3px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.editor-color:focus {
+  outline: 2px solid rgba(249, 115, 22, 0.2);
+  border-color: #f97316;
 }
