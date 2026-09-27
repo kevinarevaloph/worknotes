@@ -3174,171 +3174,344 @@
    Additional Text Formatting
 ========================================= */
 
-let savedEditorRange = null;
+/*
+ * Save the current editor selection before
+ * interacting with toolbar controls.
+ */
+function saveToolbarSelection() {
+  saveSelection();
+}
 
-function saveEditorSelection() {
-  const editor = $("noteEditor");
-
-  if (!editor) return;
-
-  const selection = window.getSelection();
-
-  if (!selection || selection.rangeCount === 0) return;
-
-  const range = selection.getRangeAt(0);
-
-  if (editor.contains(range.commonAncestorContainer)) {
-    savedEditorRange = range.cloneRange();
+/*
+ * Restore the selection without collapsing it.
+ *
+ * IMPORTANT:
+ * The editor must receive focus BEFORE the
+ * saved range is restored.
+ */
+function restoreToolbarSelection() {
+  if (!noteEditor || !savedSelection) {
+    return false;
   }
-}
 
-function restoreEditorSelection() {
-  const editor = $("noteEditor");
-
-  if (!editor || !savedEditorRange) return;
-
-  const selection = window.getSelection();
-
-  selection.removeAllRanges();
-  selection.addRange(savedEditorRange);
-
-  editor.focus();
-}
-
-
-/* Numbered List */
-document.querySelectorAll('[data-command="insertOrderedList"]').forEach(button => {
-  button.addEventListener("mousedown", event => {
-    event.preventDefault();
-    saveEditorSelection();
-  });
-
-  button.addEventListener("click", () => {
-    restoreEditorSelection();
-    document.execCommand("insertOrderedList", false, null);
-    scheduleSave();
-  });
-});
-
-
-/* Insert Link */
-const insertLinkButton = $("insertLink");
-
-if (insertLinkButton) {
-  insertLinkButton.addEventListener("mousedown", event => {
-    event.preventDefault();
-    saveEditorSelection();
-  });
-
-  insertLinkButton.addEventListener("click", () => {
-    restoreEditorSelection();
+  try {
+    noteEditor.focus();
 
     const selection = window.getSelection();
 
-    if (!selection || selection.rangeCount === 0) {
+    if (!selection) {
+      return false;
+    }
+
+    selection.removeAllRanges();
+    selection.addRange(savedSelection);
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Could not restore editor selection:",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+/* =========================================
+   Numbered List
+========================================= */
+
+document
+  .querySelectorAll(
+    '[data-command="insertOrderedList"]'
+  )
+  .forEach((button) => {
+
+    button.addEventListener(
+      "mousedown",
+      (event) => {
+        event.preventDefault();
+        saveToolbarSelection();
+      }
+    );
+
+    button.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+
+        if (
+          !restoreToolbarSelection()
+        ) {
+          return;
+        }
+
+        document.execCommand(
+          "insertOrderedList",
+          false,
+          null
+        );
+
+        saveSelection();
+        scheduleSave();
+      }
+    );
+  });
+
+
+/* =========================================
+   Insert Link
+========================================= */
+
+const insertLinkButton =
+  $("insertLink");
+
+if (insertLinkButton) {
+
+  insertLinkButton.addEventListener(
+    "mousedown",
+    (event) => {
+      event.preventDefault();
+      saveToolbarSelection();
+    }
+  );
+
+  insertLinkButton.addEventListener(
+    "click",
+    (event) => {
+      event.preventDefault();
+
+      if (
+        !restoreToolbarSelection()
+      ) {
+        return;
+      }
+
+      const selection =
+        window.getSelection();
+
+      if (
+        !selection ||
+        selection.rangeCount === 0
+      ) {
+        return;
+      }
+
+      const selectedText =
+        selection.toString().trim();
+
+      if (!selectedText) {
+        window.alert(
+          "Please select some text first."
+        );
+
+        return;
+      }
+
+      const url =
+        window.prompt(
+          "Enter the URL:",
+          "https://"
+        );
+
+      if (!url) {
+        return;
+      }
+
+      let finalUrl =
+        url.trim();
+
+      if (
+        !finalUrl.startsWith(
+          "http://"
+        ) &&
+        !finalUrl.startsWith(
+          "https://"
+        ) &&
+        !finalUrl.startsWith(
+          "mailto:"
+        )
+      ) {
+        finalUrl =
+          "https://" +
+          finalUrl;
+      }
+
+      document.execCommand(
+        "createLink",
+        false,
+        finalUrl
+      );
+
+      saveSelection();
+      scheduleSave();
+    }
+  );
+}
+
+/* =========================================
+   Make Links Clickable Inside Editor
+========================================= */
+
+if (noteEditor) {
+  noteEditor.addEventListener("click", (event) => {
+    const link = event.target.closest("a");
+
+    if (!link || !noteEditor.contains(link)) {
       return;
     }
 
-    const selectedText = selection.toString().trim();
+    const href = link.getAttribute("href");
 
-    if (!selectedText) {
-      alert("Please select some text first.");
+    if (!href) {
       return;
     }
 
-    const url = prompt("Enter the URL:");
+    event.preventDefault();
+    event.stopPropagation();
 
-    if (!url) return;
-
-    let finalUrl = url.trim();
-
-    if (
-      !finalUrl.startsWith("http://") &&
-      !finalUrl.startsWith("https://") &&
-      !finalUrl.startsWith("mailto:")
-    ) {
-      finalUrl = "https://" + finalUrl;
-    }
-
-    document.execCommand("createLink", false, finalUrl);
-
-    scheduleSave();
+    window.open(link.href, "_blank", "noopener,noreferrer");
   });
 }
 
 
-/* Font Size */
-const fontSizeSelect = $("fontSizeSelect");
+/* =========================================
+   Font Size
+========================================= */
+
+const fontSizeSelect =
+  $("fontSizeSelect");
 
 if (fontSizeSelect) {
-  fontSizeSelect.addEventListener("mousedown", () => {
-    saveEditorSelection();
-  });
 
-  fontSizeSelect.addEventListener("change", () => {
-    if (!fontSizeSelect.value) return;
+  fontSizeSelect.addEventListener(
+    "mousedown",
+    () => {
+      saveToolbarSelection();
+    }
+  );
 
-    restoreEditorSelection();
+  fontSizeSelect.addEventListener(
+    "change",
+    () => {
 
-    document.execCommand(
-      "fontSize",
-      false,
-      fontSizeSelect.value
-    );
+      const value =
+        fontSizeSelect.value;
 
-    fontSizeSelect.value = "";
+      if (!value) {
+        return;
+      }
 
-    scheduleSave();
-  });
+      if (
+        !restoreToolbarSelection()
+      ) {
+        fontSizeSelect.value = "";
+        return;
+      }
+
+      document.execCommand(
+        "fontSize",
+        false,
+        value
+      );
+
+      saveSelection();
+
+      fontSizeSelect.value = "";
+
+      scheduleSave();
+    }
+  );
 }
 
 
-/* Text Color */
-const textColorPicker = $("textColorPicker");
+/* =========================================
+   Text Color
+========================================= */
+
+const textColorPicker =
+  $("textColorPicker");
 
 if (textColorPicker) {
-  textColorPicker.addEventListener("mousedown", () => {
-    saveEditorSelection();
-  });
 
-  textColorPicker.addEventListener("change", () => {
-    restoreEditorSelection();
+  textColorPicker.addEventListener(
+    "mousedown",
+    () => {
+      saveToolbarSelection();
+    }
+  );
 
-    document.execCommand(
-      "foreColor",
-      false,
-      textColorPicker.value
-    );
+  textColorPicker.addEventListener(
+    "change",
+    () => {
 
-    scheduleSave();
-  });
+      if (
+        !restoreToolbarSelection()
+      ) {
+        return;
+      }
+
+      document.execCommand(
+        "foreColor",
+        false,
+        textColorPicker.value
+      );
+
+      saveSelection();
+      scheduleSave();
+    }
+  );
 }
 
 
-/* Text Alignment */
-const textAlignSelect = $("textAlignSelect");
+/* =========================================
+   Text Alignment
+========================================= */
+
+const textAlignSelect =
+  $("textAlignSelect");
 
 if (textAlignSelect) {
-  textAlignSelect.addEventListener("mousedown", () => {
-    saveEditorSelection();
-  });
 
-  textAlignSelect.addEventListener("change", () => {
-    if (!textAlignSelect.value) return;
+  textAlignSelect.addEventListener(
+    "mousedown",
+    () => {
+      saveToolbarSelection();
+    }
+  );
 
-    restoreEditorSelection();
+  textAlignSelect.addEventListener(
+    "change",
+    () => {
 
-    document.execCommand(
-      textAlignSelect.value,
-      false,
-      null
-    );
+      const command =
+        textAlignSelect.value;
 
-    textAlignSelect.value = "";
+      if (!command) {
+        return;
+      }
 
-    scheduleSave();
-  });
+      if (
+        !restoreToolbarSelection()
+      ) {
+        textAlignSelect.value = "";
+        return;
+      }
+
+      document.execCommand(
+        command,
+        false,
+        null
+      );
+
+      saveSelection();
+
+      textAlignSelect.value = "";
+
+      scheduleSave();
+    }
+  );
 }
-
 
 })();
